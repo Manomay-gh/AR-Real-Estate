@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using UnityEngine.EventSystems;
 
 public class Raycasting : MonoBehaviour
 {
 
     public GameObject placementMarkerGameobject;
     public Vector3 markerRotationOffSet;
-    public GameObject realGameObject;
+    public GameObject[] realGameObject;
     public Vector3 realobjRotationOffSet;
 
     private GameObject marker;
@@ -20,6 +21,9 @@ public class Raycasting : MonoBehaviour
 
     static List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
+    public int assetno=0;
+
+ 
     private void Awake()
     {
         aRRaycastManager = GameObject.Find("AR Session Origin").GetComponent<ARRaycastManager>();
@@ -29,6 +33,7 @@ public class Raycasting : MonoBehaviour
     private void Start()
     {
         FindObjectOfType<Save>().RealObjectStatus(false);
+        
     }
 
 
@@ -37,6 +42,17 @@ public class Raycasting : MonoBehaviour
         if (Save.realobjectspawned == false)
         {
             SetAllPlanes(true);
+
+            foreach (Touch touch in Input.touches)
+            {
+                int id = touch.fingerId;
+                if (EventSystem.current.IsPointerOverGameObject(id))
+                {
+                    // ui touched
+                    return;
+                }
+            }
+
 
             if (aRRaycastManager.Raycast(Camera.main.ScreenPointToRay(new Vector3(Screen.width / 2, Screen.height / 2, 0)), hits, TrackableType.PlaneWithinPolygon))
             {
@@ -58,7 +74,7 @@ public class Raycasting : MonoBehaviour
 
                         if (spawnedObject == null)
                         {
-                            spawnedObject = Instantiate(realGameObject, hitPose.position, hitPose.rotation);
+                            spawnedObject = Instantiate(realGameObject[assetno], hitPose.position, hitPose.rotation);
                             spawnedObject.transform.eulerAngles = new Vector3(spawnedObject.transform.rotation.x + realobjRotationOffSet.x, spawnedObject.transform.rotation.y + realobjRotationOffSet.y, spawnedObject.transform.rotation.z + realobjRotationOffSet.z);
                             FindObjectOfType<Save>().RealObjectStatus(true);
                             SetAllPlanes(false);
