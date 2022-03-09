@@ -9,7 +9,7 @@ public class UI_controller : MonoBehaviour
 {
     public GameObject resetButton;
     public GameObject choosePanel;
-
+    public GameObject TutPanel;
     private ARRaycastManager aRRaycastManager;
     private ARPlaneManager aRPlaneManager;
 
@@ -67,6 +67,8 @@ public class UI_controller : MonoBehaviour
 
         raycasting.assetno = int.Parse(button.gameObject.name);
         cameraar.SetActive(true);
+
+        TutPanel.SetActive(true);
 
     }
 
